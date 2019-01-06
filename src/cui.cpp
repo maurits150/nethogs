@@ -383,8 +383,11 @@ void show_ncurses(Line *lines[], int nproc) {
 }
 
 // Display all processes and relevant network traffic using show function
-void do_refresh() {
-  refreshconninode();
+void do_refresh(bool norefreshconnectioninode) {
+  if(!norefreshconnectioninode) {
+    refreshconninode();
+  }
+
   refreshcount++;
 
   if (viewMode == VIEWMODE_KBPS  || viewMode == VIEWMODE_MBPS || viewMode == VIEWMODE_GBPS) {

@@ -22,7 +22,7 @@
 
 /* NetHogs console UI */
 
-void do_refresh();
+void do_refresh(bool norefreshconninode);
 void init_ui();
 void exit_ui();
 

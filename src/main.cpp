@@ -26,7 +26,7 @@ static void help(bool iserror) {
 
   // output << "usage: nethogs [-V] [-b] [-d seconds] [-t] [-p] [-f (eth|ppp))]
   // [device [device [device ...]]]\n";
-  output << "usage: nethogs [-V] [-h] [-b] [-d seconds] [-v mode] [-c count] "
+  output << "usage: nethogs [-V] [-h] [-b] [-n] [-d seconds] [-v mode] [-c count] "
             "[-t] [-p] [-s] [-a] [-l] [-f filter] [-C]"
             "[device [device [device ...]]]\n";
   output << "		-V : prints version.\n";
@@ -45,6 +45,7 @@ static void help(bool iserror) {
   output << "		-l : display command line.\n";
   output << "		-a : monitor all devices, even loopback/stopped ones.\n";
   output << "		-C : capture TCP and UDP.\n";
+  output << "		-n : disable refreshing of connection inodes, reduces CPU usage.\n";
   output << "		-f : EXPERIMENTAL: specify string pcap filter (like tcpdump)."
             " This may be removed or changed in a future version.\n";
   output << "		device : device(s) to monitor. default is all "
@@ -139,7 +140,7 @@ int main(int argc, char **argv) {
   char *filter = NULL;
 
   int opt;
-  while ((opt = getopt(argc, argv, "Vhbtpsd:v:c:laf:C")) != -1) {
+  while ((opt = getopt(argc, argv, "Vhbtpsnd:v:c:laf:C")) != -1) {
     switch (opt) {
     case 'V':
       versiondisplay();
@@ -181,6 +182,9 @@ int main(int argc, char **argv) {
     case 'C':
       catchall = true;
       break;
+    case 'n':
+        norefreshconnectioninode = true;
+        break;
     default:
       help(true);
       exit(EXIT_FAILURE);
@@ -314,7 +318,7 @@ int main(int argc, char **argv) {
         // handle user input
         ui_tick();
       }
-      do_refresh();
+      do_refresh(norefreshconnectioninode);
     }
 
     // if not packets, do a select() until next packet
